@@ -10,7 +10,7 @@ public class Meeting
 
     public string Time { get; set; }
 
-    public string[] Attendees { get; set; }
+    public List<string> Attendees { get; set; }
 }
 
 public class NewMeeting
@@ -19,7 +19,7 @@ public class NewMeeting
 
     public string Time { get; set; }
 
-    public string[] Attendees { get; set; }
+    public List<string> Attendees { get; set; }
 
     public string Title { get; set; }
 }

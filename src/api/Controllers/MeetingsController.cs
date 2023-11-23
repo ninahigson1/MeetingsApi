@@ -44,7 +44,7 @@ public class MeetingsController : ControllerBase
     [HttpPost(Name = "CreateMeeting")]
     public IActionResult Post([FromBody] NewMeeting newMeeting)
     {
-        if (newMeeting.Attendees.Length > 5)
+        if (newMeeting.Attendees.Count > 5)
         {
             return BadRequest("Meeting cant have more than 5 attendees");
         }
