@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.AspNetCore.Routing.Template;
 
 namespace meetingsApi.Controllers;
 
@@ -21,10 +23,22 @@ public class MeetingsController : ControllerBase
     }
 
     [HttpGet(Name = "GetMeetings")]
-    public IEnumerable<Meeting> Get([FromQuery]DateOnly meetingDate)
+    public IActionResult Get([FromQuery]DateOnly meetingDate)
     {
         var meetings = _context.Meetings.Where(x => x.Date == meetingDate).ToList();
-        return meetings;
+        return Ok(meetings);
+    }
+
+    [HttpGet(template: "{meetingId:int}", Name = "GetMeeting")]
+
+    public IActionResult Get([FromRoute] int meetingId)
+    {
+        var meeting = _context.Meetings.SingleOrDefault(x => x.ID == meetingId);
+        if (meeting == null)
+        {
+            return NotFound();
+        }
+        return Ok(meeting);
     }
 
     [HttpPost(Name = "CreateMeeting")]
@@ -34,18 +48,43 @@ public class MeetingsController : ControllerBase
         {
             return BadRequest("Meeting cant have more than 5 attendees");
         }
-        return Ok(1);
+
+        var meeting = new Meeting()
+        {
+            Title = newMeeting.Title,
+            Date = newMeeting.Date,
+            Time = newMeeting.Time,
+            Attendees = newMeeting.Attendees
+        };
+        _context.Meetings.Add(meeting);
+        _context.SaveChanges();
+
+        return Ok(meeting);
     }
 
     [HttpDelete(template:"{meetingId:int}", Name = "Remove Meeting")]
     public IActionResult DeleteMeeting([FromRoute] int meetingId)
     {
+        var meeting = _context.Meetings.SingleOrDefault(x => x.ID == meetingId);
+        if (meeting == null)
+        {
+            return NotFound();
+        }
+        _context.Meetings.Remove(meeting);
+        _context.SaveChanges();
         return Ok();
     }
 
     [HttpPut(template: "{meetingId:int}", Name = "Update Meeting")]
     public IActionResult UpdateMeeting([FromRoute] int meetingId, [FromBody] UpdateMeeting updateMeeting)
     {
+        var meeting = _context.Meetings.SingleOrDefault(x => x.ID == meetingId);
+        if (meeting == null)
+        {
+            return NotFound();
+        }
+        meeting.Title = updateMeeting.Title;
+        _context.SaveChanges();
         return Ok();
     }
 }

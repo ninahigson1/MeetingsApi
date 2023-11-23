@@ -34,6 +34,11 @@ public class MeetingContext : DbContext
                 ID = 5, Attendees = new[] { "Bob" }, Title = "Meeting3", Date = DateOnly.FromDateTime(DateTime.Now),
                 Time = "14:00"
             },
+            new()
+            {
+                ID = 6, Attendees = new[] { "Bill" }, Title = "Meeting4", Date = DateOnly.FromDateTime(DateTime.Now),
+                Time = "15:00"
+            }
         });
         base.OnModelCreating(modelBuilder);
     }
